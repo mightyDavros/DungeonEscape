@@ -7,20 +7,23 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D _rigid;
     private Collider2D[] _colliders;
-    [SerializeField] float moveMultiplier = 1f;
+    [SerializeField] private float speed = 1f;
     [SerializeField] float jumpForce = 1f;
     [SerializeField] private float rayLength = 1.0f;
     [SerializeField] private LayerMask _groundLayer;
     private bool _resetJump = false;
+    private PlayerAnimation playerAnimation;
+    private SpriteRenderer playerSprite;
 
-
-    // Start is called before the first frame update
+    //handle to Player Animation
+    
     void Start()
     {
         // get reference to rigidbody
         _rigid = gameObject.GetComponent<Rigidbody2D>();
-        _rigid.GetAttachedColliders(_colliders); //not working!
-        print(_colliders);
+        playerAnimation = gameObject.GetComponent<PlayerAnimation>();
+        playerSprite = gameObject.GetComponentInChildren<SpriteRenderer>();
+
 
     }
 
@@ -33,12 +36,28 @@ public class Player : MonoBehaviour
   
     private void Movement()
     {
-        float move = Input.GetAxisRaw("Horizontal") * moveMultiplier;
+        float move = Input.GetAxisRaw("Horizontal") * speed;
+        Flip(move);
+
         _rigid.velocity = new Vector2(move, _rigid.velocity.y);
 
-        if (Input.GetKeyDown(KeyCode.Space)&& IsGrounded() == true)
+        playerAnimation.Move(move);
+
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() == true)
         {
             Jump();
+        }
+    }
+
+    private void Flip(float move)
+    {
+        if (move > 0)
+        {
+            playerSprite.flipX = false;
+        }
+        else if (move < 0)
+        {
+            playerSprite.flipX = true;
         }
     }
 
@@ -47,6 +66,7 @@ public class Player : MonoBehaviour
         Debug.Log("jump!)");
         _rigid.velocity = new Vector2(_rigid.velocity.x, jumpForce);
         StartCoroutine(ResetJumpRoutine());
+        playerAnimation.Jump(true);
     }
 
     private bool IsGrounded()
@@ -55,12 +75,17 @@ public class Player : MonoBehaviour
 
         if (hitInfo.collider !=null)
         {
-            return true;
+            if (_resetJump == false)
+            {
+                playerAnimation.Jump(false);
+                return true;
+            }
+
+
         }
-        else
-        {
-            return false;
-        }        
+
+        return false;
+      
     }
 
     IEnumerator ResetJumpRoutine()
