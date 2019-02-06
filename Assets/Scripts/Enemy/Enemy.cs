@@ -10,12 +10,64 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] protected Transform pointA, pointB;
 
-    public virtual void Attack()
+    protected Vector3 currentTarget;
+    protected Animator animator;
+
+    protected SpriteRenderer spriteRenderer;
+
+    private void Start()
     {
-        Debug.Log("Base Attack called");
+        Init();
     }
 
-    public abstract void Update();
+    public virtual void Init()
+    {
+        animator = gameObject.GetComponentInChildren<Animator>();
+        spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();  
+    }
+
+    public virtual void Update()
+    {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        {
+            return;
+        }
+        Movement();
+    }
+
+    public virtual void Movement() // virtual means derived classes can optionally use this method
+    {
+        FlipSprite();
+        if (Vector3.Distance(transform.position, pointA.position) <= 0.01f)
+        {
+            animator.SetTrigger("Idle");
+            //Debug.Log("Change Target to pointB");
+            currentTarget = pointB.position;
+        }
+        else if (Vector3.Distance(transform.position, pointB.position) <= 0.01f)
+        {
+            animator.SetTrigger("Idle");
+            //Debug.Log("Change Target to pointA");
+            currentTarget = pointA.position;
+        }
+        transform.position = Vector3.MoveTowards(transform.position, currentTarget, speed * Time.deltaTime);
+    }
+
+
+    public virtual void FlipSprite()
+    {
+        if (currentTarget == pointA.position)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else 
+        {
+            spriteRenderer.flipX = false;
+        }
+    }
+
+    //public abstract void Update(); //abstact means this is compulsory for all the classes that derive from this one
+
 
 
 
