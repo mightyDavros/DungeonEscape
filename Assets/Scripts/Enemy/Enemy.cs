@@ -10,7 +10,7 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] protected Transform pointA, pointB;
 
-    protected Vector3 currentTarget;
+    protected Transform currentTarget;
     protected Animator animator;
 
     protected SpriteRenderer spriteRenderer;
@@ -24,6 +24,7 @@ public abstract class Enemy : MonoBehaviour
     {
         animator = gameObject.GetComponentInChildren<Animator>();
         spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();  
+        currentTarget = pointB;
     }
 
     public virtual void Update()
@@ -38,25 +39,28 @@ public abstract class Enemy : MonoBehaviour
     public virtual void Movement() // virtual means derived classes can optionally use this method
     {
         FlipSprite();
+
+
         if (Vector3.Distance(transform.position, pointA.position) <= 0.01f)
         {
             animator.SetTrigger("Idle");
             //Debug.Log("Change Target to pointB");
-            currentTarget = pointB.position;
+            currentTarget = pointB;
         }
         else if (Vector3.Distance(transform.position, pointB.position) <= 0.01f)
         {
             animator.SetTrigger("Idle");
             //Debug.Log("Change Target to pointA");
-            currentTarget = pointA.position;
+            currentTarget = pointA;
         }
-        transform.position = Vector3.MoveTowards(transform.position, currentTarget, speed * Time.deltaTime);
+
+        transform.position = Vector3.MoveTowards(transform.position, currentTarget.position, speed * Time.deltaTime);        
     }
 
 
     public virtual void FlipSprite()
     {
-        if (currentTarget == pointA.position)
+        if (currentTarget == pointA)
         {
             spriteRenderer.flipX = true;
         }
