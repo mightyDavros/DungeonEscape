@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Enemy : MonoBehaviour
 {
     [SerializeField] protected int health;
-    [SerializeField] protected int speed;
+    [SerializeField] protected float speed;
     [SerializeField] protected int gems;
 
     [SerializeField] protected Transform pointA, pointB;
@@ -41,13 +41,13 @@ public abstract class Enemy : MonoBehaviour
         FlipSprite();
 
 
-        if (Vector3.Distance(transform.position, pointA.position) <= 0.01f)
+        if (Vector3.Distance(transform.position, pointA.position) <= 0.001f)
         {
             animator.SetTrigger("Idle");
             //Debug.Log("Change Target to pointB");
             currentTarget = pointB;
         }
-        else if (Vector3.Distance(transform.position, pointB.position) <= 0.01f)
+        else if (Vector3.Distance(transform.position, pointB.position) <= 0.001f)
         {
             animator.SetTrigger("Idle");
             //Debug.Log("Change Target to pointA");
