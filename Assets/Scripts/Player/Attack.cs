@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private bool canDamage = true;
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Hit:" + other.name);
+        IDamageable hit = other.GetComponent<IDamageable>();
+
+        if (hit!=null && canDamage == true)
+        {
+            hit.Damage();
+            StartCoroutine(CanDamageCooldown());
+        }
+    }
+
+    IEnumerator CanDamageCooldown()
+    {
+        canDamage = false;
+        yield return new WaitForSeconds(0.5f);
+        canDamage = true;
     }
 }
