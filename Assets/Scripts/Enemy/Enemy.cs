@@ -37,9 +37,9 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && animator.GetBool("InCombat") == false)
         {
-            CheckPlayerDistance();
+            return;
         }
         else
         {
@@ -49,8 +49,8 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void Movement() // virtual means derived classes can optionally use this method
     {
-        FlipSprite();
-        
+        CheckPlayerDistance();
+        FlipSprite();        
 
         if (Vector3.Distance(transform.position, pointA.position) <= 0.001f)
         {
@@ -68,12 +68,10 @@ public abstract class Enemy : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, currentTarget.position, speed * Time.deltaTime);
         }
-
     }
 
     private void CheckPlayerDistance()
     {
-        //check distance to player
         float distToPlayer = Vector3.Distance(transform.position, player.transform.position);
         Debug.Log("Distance between player and " + gameObject.name + " = " + distToPlayer.ToString());
 
@@ -86,14 +84,32 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void FlipSprite()
     {
-        if (currentTarget == pointA)
+        if (animator.GetBool("InCombat"))
         {
-            spriteRenderer.flipX = true;
+            //face player
+            Vector3 direction = player.transform.localPosition - transform.localPosition;
+            if (direction.x > 0)
+            {
+                spriteRenderer.flipX = false;
+            }
+            else if (direction.x < 0)
+            {
+                spriteRenderer.flipX = true;
+            }
         }
         else 
         {
-            spriteRenderer.flipX = false;
+            //face waypoint
+            if (currentTarget == pointA)
+            {
+                spriteRenderer.flipX = true;
+            }
+            else
+            {
+                spriteRenderer.flipX = false;
+            }
         }
+           
     }
 
     //public abstract void Update(); //abstact means this is compulsory for all the classes that derive from this one
