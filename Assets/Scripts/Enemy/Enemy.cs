@@ -32,7 +32,7 @@ public abstract class Enemy : MonoBehaviour
         currentTarget = pointB;
         //players = GameObject.FindGameObjectsWithTag("Player");
         player = GameObject.FindObjectOfType<Player>();
-        Debug.Log("Player found: " + player.name);
+        //Debug.Log("Player found: " + player.name);
     }
 
     public virtual void Update()
@@ -73,7 +73,7 @@ public abstract class Enemy : MonoBehaviour
     private void CheckPlayerDistance()
     {
         float distToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log("Distance between player and " + gameObject.name + " = " + distToPlayer.ToString());
+        //Debug.Log("Distance between player and " + gameObject.name + " = " + distToPlayer.ToString());
 
         if (distToPlayer > combatDistance)
         {
