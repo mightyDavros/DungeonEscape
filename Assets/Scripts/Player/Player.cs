@@ -21,6 +21,7 @@ public class Player : MonoBehaviour, IDamageable
     private Vector3 swordPos;
 
     public int Health { get ; set; }
+    public int diamonds = 0;
 
     //handle to Player Animation
 

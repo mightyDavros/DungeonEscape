@@ -11,6 +11,7 @@ public class Skeleton : Enemy, IDamageable
     {
         base.Init();
         Health = base.health;
+        pickupEmitter.numPickups = gems;
     }
     public void Damage()
     {
@@ -22,6 +23,7 @@ public class Skeleton : Enemy, IDamageable
         if (Health < 1)
         {
             animator.SetTrigger("Death");
+            pickupEmitter.isEmitting = true;
             isDead = true;
         }
     }

@@ -52,6 +52,7 @@ public class PickupEmitter : MonoBehaviour
         rigidbody.AddForce(force);
 
         //TODO create a list and populate as each pickup is created
+        //Try particle solution 
  
     }
 }

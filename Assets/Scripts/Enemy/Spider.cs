@@ -12,6 +12,7 @@ public class Spider : Enemy, IDamageable
     {
         base.Init();
         Health = health;
+        pickupEmitter.numPickups = gems;
     }
 
     public void Damage()
@@ -21,6 +22,7 @@ public class Spider : Enemy, IDamageable
         if (Health < 1)
         {
             animator.SetTrigger("Death");
+            pickupEmitter.isEmitting = true;
             isDead = true;
         }
     }
