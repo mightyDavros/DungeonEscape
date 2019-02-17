@@ -11,6 +11,8 @@ public class MossGiant : Enemy, IDamageable
     {
         base.Init();
         Health = base.health;
+        pickupEmitter.numPickups = gems;
+
     }
 
     public void Damage()
@@ -22,8 +24,12 @@ public class MossGiant : Enemy, IDamageable
         animator.SetBool("InCombat", true);
         if (Health < 1)
         {
-            Destroy(gameObject);
+            animator.SetTrigger("Death");
+            isDead = true;
+            pickupEmitter.isEmitting = true;
         }
+
+
     }
 
 

@@ -6,7 +6,7 @@ public abstract class Enemy : MonoBehaviour
 {
     [SerializeField] protected int health;
     [SerializeField] protected float speed;
-    [SerializeField] protected int gems;
+    [SerializeField] public int gems;
 
     [SerializeField] protected Transform pointA, pointB;
 
@@ -16,8 +16,11 @@ public abstract class Enemy : MonoBehaviour
     protected SpriteRenderer spriteRenderer;
 
     protected bool isHit = false;
+    protected bool isDead = false;
     protected Player player;
     [SerializeField] protected float combatDistance = 2.0f;
+
+    protected PickupEmitter pickupEmitter;
 
 
     private void Start()
@@ -33,6 +36,7 @@ public abstract class Enemy : MonoBehaviour
         //players = GameObject.FindGameObjectsWithTag("Player");
         player = GameObject.FindObjectOfType<Player>();
         //Debug.Log("Player found: " + player.name);
+        pickupEmitter = gameObject.GetComponentInChildren<PickupEmitter>();
     }
 
     public virtual void Update()
@@ -41,7 +45,7 @@ public abstract class Enemy : MonoBehaviour
         {
             return;
         }
-        else
+        if (!isDead)
         {
             Movement();
         }

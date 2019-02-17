@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private LayerMask _groundLayer;
     private bool _resetJump = false;
     private PlayerAnimation playerAnimation;
+
     private SpriteRenderer playerSprite;
     [SerializeField] SpriteRenderer swordArcSprite;
     private bool grounded = false;
@@ -32,8 +33,6 @@ public class Player : MonoBehaviour, IDamageable
         playerAnimation = gameObject.GetComponent<PlayerAnimation>();
         playerSprite = gameObject.GetComponentInChildren<SpriteRenderer>();
         swordPos = swordArcSprite.transform.localPosition;
-
-
     }
 
     // Update is called once per frame
@@ -105,12 +104,9 @@ public class Player : MonoBehaviour, IDamageable
                 playerAnimation.Jump(false);
                 return true;
             }
-
-
         }
 
-        return false;
-      
+        return false;      
     }
 
     IEnumerator ResetJumpRoutine()
@@ -123,5 +119,6 @@ public class Player : MonoBehaviour, IDamageable
     public void Damage()
     {
         Debug.Log("Player Damaged!");
+        playerAnimation.Death();
     }
 }

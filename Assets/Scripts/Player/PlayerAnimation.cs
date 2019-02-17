@@ -34,4 +34,9 @@ public class PlayerAnimation : MonoBehaviour
         playerAnimator.SetTrigger("GroundedAttack");
         swordAnimator.SetTrigger("SwordAnimation");
     }
+
+    public void Death()
+    {
+        playerAnimator.SetTrigger("Death");
+    }
 }
