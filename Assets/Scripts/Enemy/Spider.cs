@@ -18,6 +18,10 @@ public class Spider : Enemy, IDamageable
     public void Damage()
     {
         //Debug.Log("Damaged!");
+        if (isDead)
+        {
+            return;
+        }
         Health--;
         if (Health < 1)
         {

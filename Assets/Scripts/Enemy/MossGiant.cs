@@ -18,6 +18,10 @@ public class MossGiant : Enemy, IDamageable
     public void Damage()
     {
         //Debug.Log("Damaged!");
+        if (isDead)
+        {
+            return;
+        }
         Health--;
         animator.SetTrigger("Hit");
         isHit = true;
