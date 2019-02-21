@@ -11,7 +11,7 @@ public class SpiderAnimationEvent : MonoBehaviour
     {
         //assign handle to spider
         spider = gameObject.GetComponentInParent<Spider>();
-        Debug.Log("Found spider parent: " + spider.name);
+        //Debug.Log("Found spider parent: " + spider.name);
     }
     public void Fire()
     {

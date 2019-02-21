@@ -88,7 +88,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Jump()
     {
-        Debug.Log("jump!)");
+        //Debug.Log("jump!)");
         _rigid.velocity = new Vector2(_rigid.velocity.x, jumpForce);
         StartCoroutine(ResetJumpRoutine());
         playerAnimation.Jump(true);
@@ -119,7 +119,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public void Damage()
     {
-        Debug.Log("Player Damaged!");
+        //Debug.Log("Player Damaged!");
         playerAnimation.Death();
     }
 }
