@@ -13,7 +13,7 @@ public class Pickup : MonoBehaviour
         if (player != null)
         {
             //TODO increment player score
-            player.diamonds++;
+            player.AddGems(1);
             Destroy(gameObject);
         }
     }
