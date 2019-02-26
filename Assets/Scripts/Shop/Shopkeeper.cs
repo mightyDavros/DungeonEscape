@@ -90,7 +90,7 @@ public class Shopkeeper : MonoBehaviour
             UIManager.Instance.OpenShop(player.diamonds, itemCost0, itemCost1, itemCost2);
             if (currentSelectedItem == 2)
             {
-                GameManager.Instance.hasKeyToCastle = true;
+                GameManager.Instance.HasKeyToCastle = true;
             }
         }
  

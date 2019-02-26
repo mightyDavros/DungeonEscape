@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class Player : MonoBehaviour, IDamageable
 {
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public int Health { get ; set; }
     public int diamonds = 0;
+    public bool isDead = false;
 
     //handle to Player Animation
 
@@ -34,18 +36,22 @@ public class Player : MonoBehaviour, IDamageable
         playerAnimation = gameObject.GetComponent<PlayerAnimation>();
         playerSprite = gameObject.GetComponentInChildren<SpriteRenderer>();
         swordPos = swordArcSprite.transform.localPosition;
+        Health = 4;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Movement();
-        Attack();
+        if (!isDead)
+        {
+            Movement();
+            Attack();
+        }
     }
 
     private void Attack()
     {
-        if (Input.GetMouseButtonDown(0) && IsGrounded())
+        if (CrossPlatformInputManager.GetButtonDown("A_Button") && IsGrounded())
         {
             playerAnimation.GroundedAttack();
         }
@@ -54,14 +60,14 @@ public class Player : MonoBehaviour, IDamageable
     private void Movement()
     {
         grounded = IsGrounded();
-        float move = Input.GetAxisRaw("Horizontal") * speed;
+        float move = CrossPlatformInputManager.GetAxis("Horizontal") * speed;
         Flip(move);
 
         _rigid.velocity = new Vector2(move, _rigid.velocity.y);
 
         playerAnimation.Move(move);
 
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() == true)
+        if ((Input.GetKeyDown(KeyCode.Space) || CrossPlatformInputManager.GetButtonDown("B_Button")) && IsGrounded() == true)
         {
             Jump();
         }
@@ -119,13 +125,22 @@ public class Player : MonoBehaviour, IDamageable
 
     public void Damage()
     {
-        //Debug.Log("Player Damaged!");
-        playerAnimation.Death();
+        if (!isDead)
+        {
+            Debug.Log("Player Damaged!");            
+            Health--;            
+            UIManager.Instance.UpdateLives(Health);            
+            if (Health == 0)
+            {
+                playerAnimation.Death();
+                isDead = true;
+            }
+        }        
     }
 
     public void AddGems(int amount)
     {
         diamonds += amount;
-        UIManager.Instance.UpdateGemCount(diamonds);
+        UIManager.Instance.UpdateHUDGemCount(diamonds);
     }
 }

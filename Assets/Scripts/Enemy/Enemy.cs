@@ -79,7 +79,7 @@ public abstract class Enemy : MonoBehaviour
         float distToPlayer = Vector3.Distance(transform.position, player.transform.position);
         //Debug.Log("Distance between player and " + gameObject.name + " = " + distToPlayer.ToString());
 
-        if (distToPlayer > combatDistance)
+        if (distToPlayer > combatDistance || player.isDead)
         {
             isHit = false;
             animator.SetBool("InCombat", false);
