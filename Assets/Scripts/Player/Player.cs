@@ -37,6 +37,12 @@ public class Player : MonoBehaviour, IDamageable
 
     public float gasLevel = 100f;
 
+    [SerializeField] AudioSource parpAudioSource;
+    [SerializeField] AudioSource burpAudioSource;
+    [SerializeField] AudioClip parpSound;
+    [SerializeField] AudioClip[] burpSounds;
+
+
 
     //handle to Player Animation
 
@@ -48,6 +54,8 @@ public class Player : MonoBehaviour, IDamageable
         _rigid = gameObject.GetComponent<Rigidbody2D>();
         playerAnimation = gameObject.GetComponent<PlayerAnimation>();
         playerSprite = gameObject.GetComponentInChildren<SpriteRenderer>();
+        
+
         swordPos = swordArcSprite.transform.localPosition;
         Health = 4;
     }
@@ -78,28 +86,58 @@ public class Player : MonoBehaviour, IDamageable
     private void Movement()
     {
         grounded = IsGrounded();
-        float moveH = (CrossPlatformInputManager.GetAxis("Horizontal") * burpForce) *-1;
+        //float moveH = (CrossPlatformInputManager.GetAxis("Horizontal") * burpForce) *-1;
         //Flip(moveH);
-        float moveV = (CrossPlatformInputManager.GetAxis("Vertical") * burpVerticalForce) *-1;
-        Debug.Log("Adding vertical force: " + moveV.ToString());
+        //float moveV = (CrossPlatformInputManager.GetAxis("Vertical") * burpVerticalForce) *-1;
 
-        _rigid.AddForce(new Vector2(moveH, 0f));
-        if (_rigid.velocity.y < maxUpVelocity)
+        //if (moveH != 0 && moveV !=0)
+        if((Input.GetKey(KeyCode.D) || CrossPlatformInputManager.GetButton("Left_Button")))
         {
-            _rigid.AddForce(new Vector2(0f, moveV));
+            _rigid.AddForce(new Vector2(-burpForce, 0f));
+            HorizontalMovement();            
+        }
+        else if ((Input.GetKey(KeyCode.A) || CrossPlatformInputManager.GetButton("Right_Button")))
+        {
+            _rigid.AddForce(new Vector2(burpForce, 0f));
+            HorizontalMovement();
         }
 
-        playerAnimation.Move(moveH);
-        if (moveH != 0 || moveV != 0)
+        else
         {
-            gasLevel = gasLevel - (burpExpelRate * Time.deltaTime);
+            stopBurping();
         }
+        
+
         UIManager.Instance.UpdateHUDGasLevel(gasLevel);
 
-        if ((Input.GetKey(KeyCode.Space) || CrossPlatformInputManager.GetButton("B_Button")))
+        if ((Input.GetKey(KeyCode.Space) || CrossPlatformInputManager.GetButton("Parp_Button")))
         {
             Parp();
         }
+        else
+        {
+            StopParping();
+        }
+    }
+
+    private void HorizontalMovement()
+    {
+        if (!burpAudioSource.isPlaying)
+        {
+
+            burpAudioSource.pitch = (UnityEngine.Random.Range(0.6f, 1.5f));
+            burpAudioSource.PlayOneShot(burpSounds[UnityEngine.Random.Range(0, (burpSounds.Length - 1))]);
+        }
+
+        playerAnimation.Move(burpForce);
+        gasLevel = gasLevel - burpExpelRate;
+    }
+
+    private void stopBurping()
+    {
+        burpAudioSource.Stop();
+        burpAudioSource.pitch = 1f;
+        //mainEnginePTL.Stop();
     }
 
     private void Flip(float move)
@@ -129,10 +167,26 @@ public class Player : MonoBehaviour, IDamageable
             _rigid.AddForce(new Vector2(0f, parpForce));
             Debug.Log("Adding vertical force: " + parpForce.ToString());
         }
-        gasLevel = gasLevel - (parpExpelRate * Time.deltaTime);
+        gasLevel = gasLevel - parpExpelRate;
         UIManager.Instance.UpdateHUDGasLevel(gasLevel);
         //StartCoroutine(ResetJumpRoutine());
         playerAnimation.Jump(true);
+
+        if (!parpAudioSource.isPlaying)
+        {
+
+            parpAudioSource.pitch = (UnityEngine.Random.Range(0.6f, 1.5f));
+            parpAudioSource.PlayOneShot(parpSound);
+
+
+        }
+    }
+
+    private void StopParping()
+    {
+        parpAudioSource.Stop();
+        parpAudioSource.pitch = 1f;
+        //mainEnginePTL.Stop();
     }
 
     private bool IsGrounded()
