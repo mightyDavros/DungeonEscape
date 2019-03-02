@@ -8,11 +8,21 @@ public class Player : MonoBehaviour, IDamageable
 {
     private Rigidbody2D _rigid;
     private Collider2D[] _colliders;
-    [SerializeField] private float speed = 1f;
-    [SerializeField] float jumpForce = 1f;
+    [SerializeField] private float burpForce = 1f;
+    [SerializeField] private float burpVerticalForce = 1f;
+    [SerializeField] private float parpForce = 1f;
+    [SerializeField] private float maxUpVelocity = 7f;
+
+    [SerializeField] private float gasRefillRate = 0.25f;
+    [SerializeField] private float burpExpelRate = 0.1f;
+    [SerializeField] private float parpExpelRate = 0.1f;
+
+
+
     [SerializeField] private float rayLength = 1.0f;
     [SerializeField] private LayerMask _groundLayer;
     private bool _resetJump = false;
+    private bool isEmittingGas = false;
     private PlayerAnimation playerAnimation;
 
     private SpriteRenderer playerSprite;
@@ -24,6 +34,9 @@ public class Player : MonoBehaviour, IDamageable
     public int Health { get ; set; }
     public int diamonds = 0;
     public bool isDead = false;
+
+    public float gasLevel = 100f;
+
 
     //handle to Player Animation
 
@@ -47,6 +60,11 @@ public class Player : MonoBehaviour, IDamageable
             Movement();
             Attack();
         }
+        if (!isEmittingGas && gasLevel<100)
+        {
+            gasLevel = gasLevel + (gasRefillRate * Time.deltaTime);
+            UIManager.Instance.UpdateHUDGasLevel(gasLevel);
+        }
     }
 
     private void Attack()
@@ -60,16 +78,27 @@ public class Player : MonoBehaviour, IDamageable
     private void Movement()
     {
         grounded = IsGrounded();
-        float move = CrossPlatformInputManager.GetAxis("Horizontal") * speed;
-        Flip(move);
+        float moveH = (CrossPlatformInputManager.GetAxis("Horizontal") * burpForce) *-1;
+        //Flip(moveH);
+        float moveV = (CrossPlatformInputManager.GetAxis("Vertical") * burpVerticalForce) *-1;
+        Debug.Log("Adding vertical force: " + moveV.ToString());
 
-        _rigid.velocity = new Vector2(move, _rigid.velocity.y);
-
-        playerAnimation.Move(move);
-
-        if ((Input.GetKeyDown(KeyCode.Space) || CrossPlatformInputManager.GetButtonDown("B_Button")) && IsGrounded() == true)
+        _rigid.AddForce(new Vector2(moveH, 0f));
+        if (_rigid.velocity.y < maxUpVelocity)
         {
-            Jump();
+            _rigid.AddForce(new Vector2(0f, moveV));
+        }
+
+        playerAnimation.Move(moveH);
+        if (moveH != 0 || moveV != 0)
+        {
+            gasLevel = gasLevel - (burpExpelRate * Time.deltaTime);
+        }
+        UIManager.Instance.UpdateHUDGasLevel(gasLevel);
+
+        if ((Input.GetKey(KeyCode.Space) || CrossPlatformInputManager.GetButton("B_Button")))
+        {
+            Parp();
         }
     }
 
@@ -92,11 +121,17 @@ public class Player : MonoBehaviour, IDamageable
         }
     }
 
-    private void Jump()
+    private void Parp()
     {
-        //Debug.Log("jump!)");
-        _rigid.velocity = new Vector2(_rigid.velocity.x, jumpForce);
-        StartCoroutine(ResetJumpRoutine());
+        Debug.Log("parp!)");
+        if (_rigid.velocity.y < maxUpVelocity)
+        {
+            _rigid.AddForce(new Vector2(0f, parpForce));
+            Debug.Log("Adding vertical force: " + parpForce.ToString());
+        }
+        gasLevel = gasLevel - (parpExpelRate * Time.deltaTime);
+        UIManager.Instance.UpdateHUDGasLevel(gasLevel);
+        //StartCoroutine(ResetJumpRoutine());
         playerAnimation.Jump(true);
     }
 

@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
     public Text item1CostText;
     public Text item2CostText;    
     public Text gemCountHUDText; //hud
+    public Text gasLevelHUDText; //hud
     public Image[] lifebars;
 
 
@@ -56,6 +57,11 @@ public class UIManager : MonoBehaviour
     public void UpdateHUDGemCount(int count) //HUD Gem count
     {
         gemCountHUDText.text = count.ToString();
+    }
+
+    public void UpdateHUDGasLevel(float gasLevel) //HUD Gem count
+    {
+       gasLevelHUDText.text = gasLevel.ToString();
     }
 
     public void UpdateLives(int livesRemaining)
